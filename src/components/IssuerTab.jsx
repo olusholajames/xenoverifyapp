@@ -1,110 +1,144 @@
 import React from 'react';
-import { Key, RefreshCw, ShieldCheck } from 'lucide-react';
+import { BadgeCheck, KeyRound, Plus, ShieldCheck } from 'lucide-react';
+
+const claimFields = [
+  { key: 'fullName', label: 'Synthetic full name', maxLength: 120 },
+  { key: 'nin', label: 'Synthetic identifier', maxLength: 32 },
+  { key: 'dob', label: 'Date of birth', type: 'date', maxLength: 10 },
+  { key: 'nationality', label: 'Nationality', maxLength: 64 },
+  { key: 'clearanceLevel', label: 'Clearance tier', maxLength: 64 },
+  { key: 'residence', label: 'Fictional residence', maxLength: 160 },
+];
 
 export default function IssuerTab({
+  issuers,
   issuer,
+  selectedIssuerDid,
+  setSelectedIssuerDid,
   selectedCred,
+  credentials,
+  selectedCredentialId,
+  setSelectedCredentialId,
   newAttrs,
   setNewAttrs,
   handleInitIssuer,
   handleIssueCredential,
-  loading
+  loading,
 }) {
   return (
-    <div className="grid-2">
-      {/* Issuer Authority Card */}
-      <div className="card">
+    <div className="issuer-layout">
+      <section className="card" aria-labelledby="issuer-heading">
         <div className="card-header">
-          <h2 className="card-title">
-            <Key size={18} color="var(--accent-cyan)" /> 1. Issuer Authority (NIMC Simulator)
-          </h2>
-          <button 
-            className="btn btn-secondary" 
-            onClick={() => handleInitIssuer('ML-DSA-65')}
-            disabled={loading}
-          >
-            <RefreshCw size={14} /> Re-Generate Keypair
-          </button>
-        </div>
-        
-        {issuer ? (
           <div>
-            <div style={{ marginBottom: '12px' }}>
-              <span className="badge badge-emerald">Authority Active</span>
-              <p style={{ marginTop: '6px', fontWeight: 600 }}>{issuer.entity_name}</p>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>DID: {issuer.did}</p>
-            </div>
-            <div style={{ marginBottom: '12px' }}>
-              <span className="form-label">ML-DSA-65 Public Key (1,952 bytes)</span>
-              <div className="mono-box">{issuer.public_key_b64.slice(0, 100)}...</div>
-            </div>
+            <h2 id="issuer-heading" className="card-title">
+              <KeyRound size={19} color="var(--accent-cyan)" aria-hidden="true" />
+              Local issuer registry
+            </h2>
+            <p className="section-description">Issuer signing keys stay on the backend; this page receives public metadata only.</p>
+          </div>
+          <BadgeCheck size={21} color="var(--accent-emerald)" aria-hidden="true" />
+        </div>
+
+        {issuers.length > 0 ? (
+          <div className="form-group">
+            <label className="form-label" htmlFor="issuer-select">Trusted issuer</label>
+            <select
+              className="form-input"
+              id="issuer-select"
+              value={selectedIssuerDid}
+              onChange={(event) => setSelectedIssuerDid(event.target.value)}
+              disabled={loading}
+            >
+              {issuers.map((item) => (
+                <option key={item.did} value={item.did}>{item.entity_name} · {item.scheme}</option>
+              ))}
+            </select>
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '24px 0' }}>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '16px' }}>
-              No active Post-Quantum Issuer authority loaded.
-            </p>
-            <button className="btn btn-primary" onClick={() => handleInitIssuer('ML-DSA-65')} disabled={loading}>
-              Initialize ML-DSA-65 Issuer
-            </button>
-          </div>
+          <p className="empty-state">No local issuer is registered yet. Create a synthetic issuer to begin.</p>
         )}
-      </div>
 
-      {/* Credential Issuance Card */}
-      <div className="card">
+        {issuer && (
+          <dl className="metadata-list">
+            <div><dt>Status</dt><dd><span className="badge badge-emerald">Active in local registry</span></dd></div>
+            <div><dt>Scheme</dt><dd>{issuer.scheme}</dd></div>
+            <div><dt>Issuer DID</dt><dd className="break-word">{issuer.did}</dd></div>
+            <div><dt>Public key</dt><dd>{issuer.public_key_bytes} bytes · {issuer.public_key_b64?.length || 0} base64 characters</dd></div>
+          </dl>
+        )}
+
+        <div className="issuer-actions">
+          <button className="btn btn-secondary" onClick={() => handleInitIssuer('ML-DSA-65')} disabled={loading}>
+            <Plus size={15} aria-hidden="true" /> Initialize ML-DSA-65 issuer
+          </button>
+          <button className="btn btn-secondary" onClick={() => handleInitIssuer('ECDSA-secp256k1-SHA256')} disabled={loading}>
+            <Plus size={15} aria-hidden="true" /> Initialize ECDSA baseline
+          </button>
+        </div>
+      </section>
+
+      <section className="card" aria-labelledby="credential-heading">
         <div className="card-header">
-          <h2 className="card-title">
-            <ShieldCheck size={18} color="var(--accent-purple)" /> 2. Issue Synthetic Credential
-          </h2>
-          <button className="btn btn-primary" onClick={handleIssueCredential} disabled={loading}>
-            Issue & Sign (ML-DSA-65)
+          <div>
+            <h2 id="credential-heading" className="card-title">
+              <ShieldCheck size={19} color="var(--accent-purple)" aria-hidden="true" />
+              Issue a synthetic credential
+            </h2>
+            <p className="section-description">All six fixed-schema claims are synthetic and stored in the simulated wallet.</p>
+          </div>
+          <button className="btn btn-primary" onClick={handleIssueCredential} disabled={loading || !issuer}>
+            Issue &amp; sign
           </button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
-          <div className="form-group">
-            <label className="form-label">Full Name</label>
-            <input 
-              className="form-input" 
-              value={newAttrs.fullName} 
-              onChange={e => setNewAttrs({...newAttrs, fullName: e.target.value})} 
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">NIN</label>
-            <input 
-              className="form-input" 
-              value={newAttrs.nin} 
-              onChange={e => setNewAttrs({...newAttrs, nin: e.target.value})} 
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Date of Birth</label>
-            <input 
-              className="form-input" 
-              value={newAttrs.dob} 
-              onChange={e => setNewAttrs({...newAttrs, dob: e.target.value})} 
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Nationality</label>
-            <input 
-              className="form-input" 
-              value={newAttrs.nationality} 
-              onChange={e => setNewAttrs({...newAttrs, nationality: e.target.value})} 
-            />
-          </div>
+        {!issuer && <p className="inline-hint">Select or initialize an issuer before issuing.</p>}
+
+        <div className="claim-form-grid">
+          {claimFields.map(({ key, label, type = 'text', maxLength }) => (
+            <div className="form-group" key={key}>
+              <label className="form-label" htmlFor={`claim-${key}`}>{label}</label>
+              <input
+                className="form-input"
+                id={`claim-${key}`}
+                type={type}
+                value={newAttrs[key]}
+                maxLength={maxLength}
+                required
+                autoComplete="off"
+                onChange={(event) => setNewAttrs((current) => ({ ...current, [key]: event.target.value }))}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="form-group">
+          <label className="form-label" htmlFor="wallet-select">Credential in simulated wallet</label>
+          <select
+            className="form-input"
+            id="wallet-select"
+            value={selectedCredentialId}
+            onChange={(event) => setSelectedCredentialId(event.target.value)}
+            disabled={loading || credentials.length === 0}
+          >
+            {credentials.length === 0 && <option value="">No credentials yet</option>}
+            {credentials.map((credential) => (
+              <option key={credential.id} value={credential.id}>
+                {credential.subject_did} · {credential.status}
+              </option>
+            ))}
+          </select>
         </div>
 
         {selectedCred && (
-          <div style={{ marginTop: '16px', borderTop: '1px solid var(--border-subtle)', paddingTop: '12px' }}>
-            <span className="badge badge-cyan" style={{ marginBottom: '8px' }}>Latest Merkle Commitment</span>
-            <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Root: {selectedCred.merkle_root}</div>
-            <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Signature: {selectedCred.signature_bytes === 3293 ? 3309 : (selectedCred.signature_bytes || 3309)} bytes</div>
+          <div className="commitment-summary">
+            <span className={`badge ${selectedCred.status === 'revoked' ? 'badge-amber' : 'badge-cyan'}`}>
+              {selectedCred.status === 'revoked' ? 'Revoked' : 'Active'} credential
+            </span>
+            <span className="mono-label">Merkle root</span>
+            <code className="break-word">{selectedCred.merkle_root}</code>
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

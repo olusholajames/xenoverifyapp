@@ -1,0 +1,223 @@
+{
+  "configurations": {
+    "ECDSA-secp256k1-SHA256": {
+      "api": "cryptography.ec.ECDSA(SHA256)",
+      "keypair_json_bytes": 375,
+      "public_key_b64_chars": 120,
+      "public_key_bytes": 88,
+      "scheme": "ECDSA-secp256k1-SHA256",
+      "secret_key_b64_chars": 180,
+      "secret_key_bytes": 135,
+      "signature_bytes_sample": 71,
+      "signature_bytes_unique_in_measured_sign_trials": [
+        70,
+        71,
+        72
+      ]
+    },
+    "ML-DSA-65": {
+      "api": "dilithium-py.ml_dsa.ML_DSA_65",
+      "keypair_json_bytes": 8042,
+      "public_key_b64_chars": 2604,
+      "public_key_bytes": 1952,
+      "scheme": "ML-DSA-65",
+      "secret_key_b64_chars": 5376,
+      "secret_key_bytes": 4032,
+      "signature_bytes_sample": 3309,
+      "signature_bytes_unique_in_measured_sign_trials": [
+        3309
+      ]
+    }
+  },
+  "mean_ratio_MLDSA_over_ECDSA": {
+    "keygen": 18.192930441728016,
+    "sign": 38.1589762334368,
+    "verify": 20.832426850949204
+  },
+  "measured_trials_per_operation_configuration": 50,
+  "memory_methodology": {
+    "limitations": "RSS sampling may miss short peaks; tracemalloc excludes native allocations; instrumentation is separate from latency trials.",
+    "measured_calls_per_process": 50,
+    "process_scope": "Fresh child process per configuration and operation",
+    "python_allocation_tool": "tracemalloc.get_traced_memory",
+    "rss_tool": "psutil.Process.memory_info().rss",
+    "sampling_interval_ms": 20,
+    "sampling_window": "Starting RSS sample after warm-ups, then sampling across the 50 measured calls",
+    "tracemalloc_window": "50 measured calls only",
+    "warmups_per_process": 5,
+    "warmups_profiled": false
+  },
+  "memory_profiles": [
+    {
+      "baseline_rss_bytes": 32182272,
+      "configuration": "ML-DSA-65",
+      "error": null,
+      "max_sampled_rss_bytes": 35020800,
+      "operation": "keygen",
+      "rss_sample_count": 604,
+      "sampled_rss_delta_bytes": 2838528,
+      "sampling_interval_ms": 20,
+      "status": "ok",
+      "tracemalloc_peak_bytes": 590455
+    },
+    {
+      "baseline_rss_bytes": 32468992,
+      "configuration": "ML-DSA-65",
+      "error": null,
+      "max_sampled_rss_bytes": 37052416,
+      "operation": "sign",
+      "rss_sample_count": 4445,
+      "sampled_rss_delta_bytes": 4583424,
+      "sampling_interval_ms": 20,
+      "status": "ok",
+      "tracemalloc_peak_bytes": 1221064
+    },
+    {
+      "baseline_rss_bytes": 33021952,
+      "configuration": "ML-DSA-65",
+      "error": null,
+      "max_sampled_rss_bytes": 35049472,
+      "operation": "verify",
+      "rss_sample_count": 826,
+      "sampled_rss_delta_bytes": 2027520,
+      "sampling_interval_ms": 20,
+      "status": "ok",
+      "tracemalloc_peak_bytes": 652178
+    },
+    {
+      "baseline_rss_bytes": 31649792,
+      "configuration": "ECDSA-secp256k1-SHA256",
+      "error": null,
+      "max_sampled_rss_bytes": 33517568,
+      "operation": "keygen",
+      "rss_sample_count": 5,
+      "sampled_rss_delta_bytes": 1867776,
+      "sampling_interval_ms": 20,
+      "status": "ok",
+      "tracemalloc_peak_bytes": 1012
+    },
+    {
+      "baseline_rss_bytes": 33337344,
+      "configuration": "ECDSA-secp256k1-SHA256",
+      "error": null,
+      "max_sampled_rss_bytes": 34656256,
+      "operation": "sign",
+      "rss_sample_count": 6,
+      "sampled_rss_delta_bytes": 1318912,
+      "sampling_interval_ms": 20,
+      "status": "ok",
+      "tracemalloc_peak_bytes": 3066
+    },
+    {
+      "baseline_rss_bytes": 34189312,
+      "configuration": "ECDSA-secp256k1-SHA256",
+      "error": null,
+      "max_sampled_rss_bytes": 34549760,
+      "operation": "verify",
+      "rss_sample_count": 4,
+      "sampled_rss_delta_bytes": 360448,
+      "sampling_interval_ms": 20,
+      "status": "ok",
+      "tracemalloc_peak_bytes": 980
+    }
+  ],
+  "operation_summaries": {
+    "ECDSA-secp256k1-SHA256": {
+      "keygen": {
+        "attempts": 50,
+        "failed_calls": 0,
+        "max_ms": 2.18,
+        "mean_ms": 0.921472,
+        "median_ms": 0.8008,
+        "min_ms": 0.6453,
+        "p95_nearest_rank_ms": 1.7161,
+        "sample_sd_ms": 0.32726197646658606,
+        "successful_calls": 50,
+        "timed_calls": 50,
+        "units": "milliseconds"
+      },
+      "sign": {
+        "attempts": 50,
+        "failed_calls": 0,
+        "max_ms": 4.4133,
+        "mean_ms": 3.354124,
+        "median_ms": 3.44565,
+        "min_ms": 1.2118,
+        "p95_nearest_rank_ms": 4.222,
+        "sample_sd_ms": 0.74939149643057,
+        "successful_calls": 50,
+        "timed_calls": 50,
+        "units": "milliseconds"
+      },
+      "verify": {
+        "attempts": 50,
+        "failed_calls": 0,
+        "max_ms": 2.4539,
+        "mean_ms": 1.594074,
+        "median_ms": 1.6522999999999999,
+        "min_ms": 0.6406,
+        "p95_nearest_rank_ms": 2.165,
+        "sample_sd_ms": 0.42311743475767855,
+        "successful_calls": 50,
+        "timed_calls": 50,
+        "units": "milliseconds"
+      }
+    },
+    "ML-DSA-65": {
+      "keygen": {
+        "attempts": 50,
+        "failed_calls": 0,
+        "max_ms": 42.5206,
+        "mean_ms": 16.764276,
+        "median_ms": 15.0305,
+        "min_ms": 13.5911,
+        "p95_nearest_rank_ms": 30.2133,
+        "sample_sd_ms": 5.477470602853705,
+        "successful_calls": 50,
+        "timed_calls": 50,
+        "units": "milliseconds"
+      },
+      "sign": {
+        "attempts": 50,
+        "failed_calls": 0,
+        "max_ms": 542.2699,
+        "mean_ms": 127.989938,
+        "median_ms": 100.64744999999999,
+        "min_ms": 38.0796,
+        "p95_nearest_rank_ms": 387.174,
+        "sample_sd_ms": 93.90553676757122,
+        "successful_calls": 50,
+        "timed_calls": 50,
+        "units": "milliseconds"
+      },
+      "verify": {
+        "attempts": 50,
+        "failed_calls": 0,
+        "max_ms": 49.6855,
+        "mean_ms": 33.20843,
+        "median_ms": 32.891099999999994,
+        "min_ms": 17.4432,
+        "p95_nearest_rank_ms": 48.9056,
+        "sample_sd_ms": 8.205630675241812,
+        "successful_calls": 50,
+        "timed_calls": 50,
+        "units": "milliseconds"
+      }
+    }
+  },
+  "protocol_id": "XV-FINAL-02",
+  "run_id": "20261107-benchmark-xv02",
+  "sample_serialized_sizes": {
+    "ECDSA-secp256k1-SHA256": {
+      "presentation_json_bytes": 1428,
+      "signature_b64_chars": 96,
+      "signature_bytes": 71
+    },
+    "ML-DSA-65": {
+      "presentation_json_bytes": 5744,
+      "signature_b64_chars": 4412,
+      "signature_bytes": 3309
+    }
+  },
+  "warmups_per_operation_configuration": 5
+}

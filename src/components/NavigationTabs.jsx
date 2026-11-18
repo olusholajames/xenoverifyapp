@@ -1,33 +1,27 @@
 import React from 'react';
-import { Cpu, Key, Fingerprint, Activity } from 'lucide-react';
+import { Activity, Cpu, Fingerprint, Key } from 'lucide-react';
+
+const tabs = [
+  { id: 'dsrm', label: 'Scope & specifications', icon: Cpu },
+  { id: 'issuer', label: 'Issuer & signing', icon: Key },
+  { id: 'disclosure', label: 'Selective disclosure', icon: Fingerprint },
+  { id: 'benchmarks', label: 'Evaluation evidence', icon: Activity },
+];
 
 export default function NavigationTabs({ activeTab, setActiveTab }) {
   return (
-    <nav className="nav-tabs">
-      <button 
-        className={`nav-tab-btn ${activeTab === 'dsrm' ? 'active' : ''}`}
-        onClick={() => setActiveTab('dsrm')}
-      >
-        <Cpu size={16} /> Chapter 3 DSRM Scope & Specs
-      </button>
-      <button 
-        className={`nav-tab-btn ${activeTab === 'issuer' ? 'active' : ''}`}
-        onClick={() => setActiveTab('issuer')}
-      >
-        <Key size={16} /> Issuer Authority & Signing
-      </button>
-      <button 
-        className={`nav-tab-btn ${activeTab === 'disclosure' ? 'active' : ''}`}
-        onClick={() => setActiveTab('disclosure')}
-      >
-        <Fingerprint size={16} /> Selective Disclosure Playground
-      </button>
-      <button 
-        className={`nav-tab-btn ${activeTab === 'benchmarks' ? 'active' : ''}`}
-        onClick={() => setActiveTab('benchmarks')}
-      >
-        <Activity size={16} /> Chapter 4 Benchmarks & Metrics
-      </button>
+    <nav className="nav-tabs" aria-label="Project sections">
+      {tabs.map(({ id, label, icon: Icon }) => (
+        <button
+          key={id}
+          type="button"
+          className={`nav-tab-btn ${activeTab === id ? 'active' : ''}`}
+          aria-current={activeTab === id ? 'page' : undefined}
+          onClick={() => setActiveTab(id)}
+        >
+          <Icon size={16} aria-hidden="true" /> {label}
+        </button>
+      ))}
     </nav>
   );
 }

@@ -1,31 +1,31 @@
 import React from 'react';
-import { ShieldCheck, FileText } from 'lucide-react';
+import { FileText, ShieldCheck } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
-export default function Header() {
+export default function Header({ systemInfo, apiConnected }) {
+  const docsUrl = `${API_BASE_URL.replace(/\/$/, '')}/docs/`;
+
   return (
     <header className="header-bar">
       <div className="logo-badge">
-        <div className="logo-icon">
-          <ShieldCheck size={26} color="#fff" />
+        <div className="logo-icon" aria-hidden="true">
+          <ShieldCheck size={25} color="#fff" />
         </div>
         <div>
           <h1 className="brand-title">Xenoverify</h1>
-          <div className="brand-subtitle">Post-Quantum Digital Identity & Selective Disclosure Prototype</div>
+          <p className="brand-subtitle">Selective-disclosure identity research prototype</p>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-        <a 
-          href="https://xenoverify.vercel.app/swagger/" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="btn btn-secondary"
-          style={{ padding: '6px 14px', fontSize: '12px', textDecoration: 'none' }}
-        >
-          <FileText size={14} /> Swagger API Docs
+      <div className="header-meta">
+        <span className={`badge ${apiConnected ? 'badge-emerald' : 'badge-amber'}`} role="status">
+          <span className={`status-dot ${apiConnected ? 'is-online' : ''}`} aria-hidden="true" />
+          {apiConnected ? 'API connected' : 'API unavailable'}
+        </span>
+        <span className="badge badge-purple">XV-FINAL-01</span>
+        <a href={docsUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary docs-link">
+          <FileText size={15} aria-hidden="true" /> API documentation
         </a>
-        <span className="badge badge-cyan">NIST FIPS 204 (ML-DSA-65)</span>
-        <span className="badge badge-purple">MRe DSRM Framework</span>
       </div>
     </header>
   );
