@@ -1,32 +1,25 @@
 import React from 'react';
-import { FileText, ShieldCheck } from 'lucide-react';
-import { API_BASE_URL } from '../config';
+import { ShieldCheck } from 'lucide-react';
 
-export default function Header({ systemInfo, apiConnected }) {
-  const docsUrl = `${API_BASE_URL.replace(/\/$/, '')}/docs/`;
-
+export default function Header({ apiConnected }) {
   return (
-    <header className="header-bar">
-      <div className="logo-badge">
+    <div className="sidebar-brand">
+      <div className="brand-row">
         <div className="logo-icon" aria-hidden="true">
-          <ShieldCheck size={25} color="#fff" />
+          <ShieldCheck size={20} strokeWidth={1.75} />
         </div>
         <div>
           <h1 className="brand-title">Xenoverify</h1>
           <p className="brand-subtitle">Selective-disclosure identity research prototype</p>
         </div>
       </div>
-
-      <div className="header-meta">
-        <span className={`badge ${apiConnected ? 'badge-emerald' : 'badge-amber'}`} role="status">
-          <span className={`status-dot ${apiConnected ? 'is-online' : ''}`} aria-hidden="true" />
+      <div className="brand-meta">
+        <span className={`api-status ${apiConnected ? 'is-online' : ''}`} role="status">
+          <span className="status-dot" aria-hidden="true" />
           {apiConnected ? 'API connected' : 'API unavailable'}
         </span>
-        <span className="badge badge-purple">XV-FINAL-01</span>
-        <a href={docsUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary docs-link">
-          <FileText size={15} aria-hidden="true" /> API documentation
-        </a>
+        <span className="mono-meta">XV-FINAL-01</span>
       </div>
-    </header>
+    </div>
   );
 }

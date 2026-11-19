@@ -1,5 +1,5 @@
 import React from 'react';
-import { BadgeCheck, KeyRound, Plus, ShieldCheck } from 'lucide-react';
+import { KeyRound, Plus, ShieldCheck } from 'lucide-react';
 
 const claimFields = [
   { key: 'fullName', label: 'Synthetic full name', maxLength: 120 },
@@ -31,12 +31,11 @@ export default function IssuerTab({
         <div className="card-header">
           <div>
             <h2 id="issuer-heading" className="card-title">
-              <KeyRound size={19} color="var(--accent-cyan)" aria-hidden="true" />
+              <KeyRound size={18} strokeWidth={1.75} aria-hidden="true" />
               Local issuer registry
             </h2>
-            <p className="section-description">Issuer signing keys stay on the backend; this page receives public metadata only.</p>
+            <p className="section-description">Issuer signing keys stay on the backend; this page receives public metadata only</p>
           </div>
-          <BadgeCheck size={21} color="var(--accent-emerald)" aria-hidden="true" />
         </div>
 
         {issuers.length > 0 ? (
@@ -69,10 +68,10 @@ export default function IssuerTab({
 
         <div className="issuer-actions">
           <button className="btn btn-secondary" onClick={() => handleInitIssuer('ML-DSA-65')} disabled={loading}>
-            <Plus size={15} aria-hidden="true" /> Initialize ML-DSA-65 issuer
+            <Plus size={16} strokeWidth={1.75} aria-hidden="true" /> Initialize ML-DSA-65 issuer
           </button>
           <button className="btn btn-secondary" onClick={() => handleInitIssuer('ECDSA-secp256k1-SHA256')} disabled={loading}>
-            <Plus size={15} aria-hidden="true" /> Initialize ECDSA baseline
+            <Plus size={16} strokeWidth={1.75} aria-hidden="true" /> Initialize ECDSA baseline
           </button>
         </div>
       </section>
@@ -81,10 +80,10 @@ export default function IssuerTab({
         <div className="card-header">
           <div>
             <h2 id="credential-heading" className="card-title">
-              <ShieldCheck size={19} color="var(--accent-purple)" aria-hidden="true" />
+              <ShieldCheck size={18} strokeWidth={1.75} aria-hidden="true" />
               Issue a synthetic credential
             </h2>
-            <p className="section-description">All six fixed-schema claims are synthetic and stored in the simulated wallet.</p>
+            <p className="section-description">All six fixed-schema claims are synthetic and stored in the simulated wallet</p>
           </div>
           <button className="btn btn-primary" onClick={handleIssueCredential} disabled={loading || !issuer}>
             Issue &amp; sign

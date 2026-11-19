@@ -2,11 +2,14 @@ import React from 'react';
 import { Activity, Download, Terminal } from 'lucide-react';
 
 const configurations = ['ML-DSA-65', 'ECDSA-secp256k1-SHA256'];
+const schemeLabels = { 'ML-DSA-65': 'ML-DSA-65', 'ECDSA-secp256k1-SHA256': 'ECDSA' };
 const operations = [
   { key: 'keygen', label: 'Key generation' },
   { key: 'sign', label: 'Signing' },
   { key: 'verify', label: 'Verification' },
 ];
+const LOG_AXIS_MAX = Math.log10(1000);
+const AXIS_TICKS = ['1', '10', '100', '1000 ms'];
 
 function formatMs(value) {
   return Number.isFinite(value) ? `${value.toFixed(2)} ms` : '—';
@@ -14,6 +17,51 @@ function formatMs(value) {
 
 function formatBytes(value) {
   return Number.isFinite(value) ? `${value.toLocaleString()} bytes` : '—';
+}
+
+function logPct(ms) {
+  return `${Math.max(2, (Math.log10(ms) / LOG_AXIS_MAX) * 100)}%`;
+}
+
+function LatencyComparison({ summary }) {
+  return (
+    <section className="latency-chart" aria-label="Mean latency comparison on a logarithmic scale">
+      <div className="latency-head">
+        <h3>Mean latency</h3>
+        <span className="latency-scale-note">log scale</span>
+      </div>
+      <div className="latency-axis" aria-hidden="true">
+        {AXIS_TICKS.map((tick, index) => (
+          <span key={tick} style={{ left: `${(index / (AXIS_TICKS.length - 1)) * 100}%` }}>{tick}</span>
+        ))}
+      </div>
+      {operations.map(({ key, label }) => (
+        <div className="latency-op" key={key}>
+          <span className="latency-op-label">{label}</span>
+          <div className="latency-rows">
+            {configurations.map((configuration) => {
+              const mean = summary.operation_summaries[configuration]?.[key]?.mean_ms;
+              return (
+                <div className="latency-row" key={configuration}>
+                  <span className="latency-scheme">{schemeLabels[configuration]}</span>
+                  <span className="latency-track">
+                    {Number.isFinite(mean) && (
+                      <span
+                        className={`latency-fill ${configuration.startsWith('ML-DSA') ? 'is-pqc' : 'is-baseline'}`}
+                        style={{ width: logPct(mean) }}
+                      />
+                    )}
+                  </span>
+                  <span className="latency-val">{formatMs(mean)}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+      <p className="latency-note">Bars compare the mean of {summary.measured_trials_per_operation_configuration} measured sequential trials per operation; the axis is logarithmic.</p>
+    </section>
+  );
 }
 
 export default function BenchmarkTab({ summary }) {
@@ -26,10 +74,10 @@ export default function BenchmarkTab({ summary }) {
         <div className="card-header">
           <div>
             <h2 id="evaluation-heading" className="card-title">
-              <Activity size={20} color="var(--accent-cyan)" aria-hidden="true" />
+              <Activity size={18} strokeWidth={1.75} aria-hidden="true" />
               Bounded cryptographic comparison
             </h2>
-            <p className="section-description">Sequential local trials; the browser does not trigger or time the evaluation.</p>
+            <p className="section-description">Sequential local trials; the browser does not trigger or time the evaluation</p>
           </div>
           {hasMeasurements && <span className="badge badge-emerald">Measured evidence</span>}
         </div>
@@ -45,6 +93,7 @@ export default function BenchmarkTab({ summary }) {
             <p className="evidence-note">
               Run <code>{summary.run_id}</code> · {summary.protocol_id} · {summary.measured_trials_per_operation_configuration} measured trials per operation and scheme, after {summary.warmups_per_operation_configuration} warm-ups.
             </p>
+            <LatencyComparison summary={summary} />
             <div className="table-scroll">
               <table className="scope-table results-table">
                 <thead>
@@ -112,15 +161,15 @@ export default function BenchmarkTab({ summary }) {
               </div>
             </section>
 
-            <p className="evidence-note"><Download size={16} aria-hidden="true" /> Raw CSV, environment manifest and signed-byte fixtures are preserved under <code>experiments/results/{summary.run_id}/</code>. OpenSSL is an interoperability cross-check, not a benchmark arm.</p>
+            <p className="evidence-note"><Download size={16} strokeWidth={1.75} aria-hidden="true" /> Raw CSV, environment manifest and signed-byte fixtures are preserved under <code>experiments/results/{summary.run_id}/</code>. OpenSSL is an interoperability cross-check, not a benchmark arm.</p>
             <p className="inline-hint">These measurements describe this machine, software revision and fixed workload only; they do not establish production performance or security.</p>
           </>
         )}
       </section>
 
       <section className="card protocol-command" aria-labelledby="protocol-command-heading">
-        <h3 id="protocol-command-heading" className="card-title"><Terminal size={18} aria-hidden="true" /> Reproduce the experiment</h3>
-        <p className="section-description">The run writes raw observations first, retains failures, and creates a manifest before processing results.</p>
+        <h3 id="protocol-command-heading" className="card-title"><Terminal size={18} strokeWidth={1.75} aria-hidden="true" /> Reproduce the experiment</h3>
+        <p className="section-description">The run writes raw observations first, retains failures, and creates a manifest before processing results</p>
         <code className="command-block">python manage.py run_final_evaluation --mode benchmark</code>
         <p className="inline-hint">Protocol: canonical signed envelope; six synthetic string claims; disclose <code>fullName</code> and <code>nationality</code>; five warm-ups and fifty measured sequential trials for each operation.</p>
       </section>

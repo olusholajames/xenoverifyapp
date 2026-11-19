@@ -38,12 +38,11 @@ export default function ScopeTab({ systemInfo }) {
         <div className="card-header">
           <div>
             <h2 id="scope-heading" className="card-title">
-              <FileText size={20} color="var(--accent-cyan)" aria-hidden="true" />
+              <FileText size={18} strokeWidth={1.75} aria-hidden="true" />
               Project scope and evidence
             </h2>
-            <p className="section-description">The implemented cryptographic functions are separated from simulated infrastructure.</p>
+            <p className="section-description">The implemented cryptographic functions are separated from simulated infrastructure</p>
           </div>
-          <span className="badge badge-purple">XV-FINAL-01</span>
         </div>
 
         <div className="table-scroll">
@@ -67,7 +66,7 @@ export default function ScopeTab({ systemInfo }) {
       <div className="scope-details">
         <section className="card" aria-labelledby="protocol-heading">
           <h3 id="protocol-heading" className="card-title">
-            <LockKeyhole size={18} color="var(--accent-cyan)" aria-hidden="true" />
+            <LockKeyhole size={18} strokeWidth={1.75} aria-hidden="true" />
             Frozen evaluation protocol
           </h3>
           <dl className="metadata-list">
@@ -81,7 +80,7 @@ export default function ScopeTab({ systemInfo }) {
 
         <section className="card" aria-labelledby="limits-heading">
           <h3 id="limits-heading" className="card-title">
-            <AlertTriangle size={18} color="var(--accent-amber)" aria-hidden="true" />
+            <AlertTriangle size={18} strokeWidth={1.75} aria-hidden="true" />
             Claims and limitations
           </h3>
           <ul className="limitation-list">
@@ -94,7 +93,7 @@ export default function ScopeTab({ systemInfo }) {
         </section>
       </div>
 
-      <p className="evidence-note"><CheckCircle2 size={16} aria-hidden="true" /> Acceptance and negative-case evidence is preserved as raw artifacts with its environment manifest.</p>
+      <p className="evidence-note"><CheckCircle2 size={16} strokeWidth={1.75} aria-hidden="true" /> Acceptance and negative-case evidence is preserved as raw artifacts with its environment manifest.</p>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { AlertTriangle, FileText, RefreshCw } from 'lucide-react';
 import { API_BASE_URL } from './config';
 
 import Header from './components/Header';
@@ -79,8 +79,15 @@ async function createPresentation(credentialId, disclosedKeys) {
   });
 }
 
+const TAB_IDS = ['dsrm', 'issuer', 'disclosure', 'benchmarks'];
+
+function initialTab() {
+  const requested = window.location.hash.replace('#', '');
+  return TAB_IDS.includes(requested) ? requested : 'dsrm';
+}
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState('dsrm');
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [systemInfo, setSystemInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [processingMessage, setProcessingMessage] = useState('');
@@ -241,39 +248,54 @@ export default function App() {
   };
 
   return (
-    <div className="app-container">
-      <Header systemInfo={systemInfo} apiConnected={Boolean(systemInfo)} />
+    <div className="app-shell">
+      <aside className="app-sidebar">
+        <Header apiConnected={Boolean(systemInfo)} />
 
-      <section className="prototype-notice" aria-label="Prototype and privacy limitations">
-        <AlertTriangle size={19} aria-hidden="true" />
-        <p>
-          <strong>Synthetic-data research prototype.</strong> The wallet, issuer registry and status ledger are local simulations.
-          Selective disclosure is not zero-knowledge; stable credential details may be linkable, and copied material can be presented with a fresh challenge.
-        </p>
-      </section>
+        <NavigationTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {apiError && (
-        <div className="error-banner" role="alert">
-          <div>
-            <strong>Could not complete the request</strong>
-            <p>{apiError}</p>
-          </div>
-          <button className="btn btn-secondary" onClick={() => void loadInitialData()} disabled={busy}>
-            Retry connection
-          </button>
+        <div className="sidebar-foot">
+          <aside className="prototype-note" aria-label="Prototype and privacy limitations">
+            <AlertTriangle size={16} strokeWidth={1.75} aria-hidden="true" />
+            <p>
+              <strong>Synthetic-data research prototype.</strong> The wallet, issuer registry and status ledger are local
+              simulations. Selective disclosure is not zero-knowledge; stable credential details may be linkable, and
+              copied material can be presented with a fresh challenge.
+            </p>
+          </aside>
+          <a
+            href={`${API_BASE_URL.replace(/\/$/, '')}/docs/`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-secondary sidebar-docs"
+          >
+            <FileText size={16} strokeWidth={1.75} aria-hidden="true" /> API documentation
+          </a>
         </div>
-      )}
+      </aside>
 
-      {busy && (
-        <div className="processing-banner" role="status" aria-live="polite">
-          <RefreshCw size={18} className="spinner" aria-hidden="true" />
-          <span>{processingMessage || 'Connecting to the local prototype API…'}</span>
-        </div>
-      )}
+      <div className="app-content">
+        <div className="content-inner">
+          {apiError && (
+            <div className="error-banner" role="alert">
+              <div>
+                <strong>Could not complete the request</strong>
+                <p>{apiError}</p>
+              </div>
+              <button className="btn btn-secondary" onClick={() => void loadInitialData()} disabled={busy}>
+                Retry connection
+              </button>
+            </div>
+          )}
 
-      <NavigationTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+          {busy && (
+            <div className="processing-banner" role="status" aria-live="polite">
+              <RefreshCw size={16} strokeWidth={1.75} className="spinner" aria-hidden="true" />
+              <span>{processingMessage || 'Connecting to the local prototype API…'}</span>
+            </div>
+          )}
 
-      <main id="main-content">
+          <main id="main-content">
         {activeTab === 'dsrm' && <ScopeTab systemInfo={systemInfo} />}
         {activeTab === 'issuer' && (
           <IssuerTab
@@ -306,7 +328,9 @@ export default function App() {
           />
         )}
         {activeTab === 'benchmarks' && <BenchmarkTab summary={benchmarkSummary} />}
-      </main>
+          </main>
+        </div>
+      </div>
     </div>
   );
 }

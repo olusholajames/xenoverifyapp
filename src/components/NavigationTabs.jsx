@@ -17,9 +17,13 @@ export default function NavigationTabs({ activeTab, setActiveTab }) {
           type="button"
           className={`nav-tab-btn ${activeTab === id ? 'active' : ''}`}
           aria-current={activeTab === id ? 'page' : undefined}
-          onClick={() => setActiveTab(id)}
+          onClick={() => {
+            setActiveTab(id);
+            window.history.replaceState(null, '', `#${id}`);
+            window.scrollTo(0, 0);
+          }}
         >
-          <Icon size={16} aria-hidden="true" /> {label}
+          <Icon size={16} strokeWidth={1.75} aria-hidden="true" /> {label}
         </button>
       ))}
     </nav>
